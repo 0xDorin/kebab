@@ -12,13 +12,21 @@ import {
   CardTitle,
 } from "../components/ui/card";
 
-// TODO: Replace with actual deployed Authorize contract address
-const AUTHORIZE_ADDRESS = "0x1234567890123456789012345678901234567890" as const;
+// Get contract addresses from environment variables
+const AUTHORIZE_CONTRACT_ADDRESS = process.env
+  .NEXT_PUBLIC_AUTHORIZE_CONTRACT_ADDRESS as `0x${string}`;
+
+// Validate that all required environment variables are set
+if (!AUTHORIZE_CONTRACT_ADDRESS) {
+  console.error(
+    "Missing required environment variables. Please check your .env.local file."
+  );
+}
 
 export default function Home() {
   const handleRefresh = () => {
-    // Force refresh of proposals
-    window.location.reload();
+    // 새로고침 제거 - 에러 핸들링으로 대체
+    console.log("Proposal created - refresh disabled");
   };
 
   return (
@@ -35,11 +43,14 @@ export default function Home() {
         <Card>
           <CardHeader>
             <CardTitle>Contract Information</CardTitle>
-            <CardDescription>Connected to Authorize contract</CardDescription>
+            <CardDescription>Connected contracts</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="font-mono text-sm">
-              <strong>Address:</strong> {AUTHORIZE_ADDRESS}
+            <div className="space-y-2 font-mono text-sm">
+              <div>
+                <strong>Authorize Contract:</strong>{" "}
+                {AUTHORIZE_CONTRACT_ADDRESS}
+              </div>
             </div>
           </CardContent>
         </Card>
@@ -47,17 +58,17 @@ export default function Home() {
         {/* Action Forms */}
         <div className="grid md:grid-cols-2 gap-6">
           <WithdrawalForm
-            authorizeAddress={AUTHORIZE_ADDRESS}
+            authorizeAddress={AUTHORIZE_CONTRACT_ADDRESS}
             onProposalCreated={handleRefresh}
           />
           <OwnerForm
-            authorizeAddress={AUTHORIZE_ADDRESS}
+            authorizeAddress={AUTHORIZE_CONTRACT_ADDRESS}
             onProposalCreated={handleRefresh}
           />
         </div>
 
         {/* Proposals List */}
-        <ProposalList authorizeAddress={AUTHORIZE_ADDRESS} />
+        <ProposalList authorizeAddress={AUTHORIZE_CONTRACT_ADDRESS} />
       </div>
     </Wrapper>
   );

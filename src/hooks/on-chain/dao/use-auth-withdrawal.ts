@@ -5,7 +5,7 @@ import {
   useReadContract,
 } from "wagmi";
 import { Address, parseEther, formatEther } from "viem";
-import AuthorizeWithdrawalABI from "../../../../abis/AuthorizeWithdrawal.json";
+import AuthorizeABI from "../../../../abis/Authorize.json";
 
 // WithdrawalTarget enum
 export enum WithdrawalTarget {
@@ -36,14 +36,14 @@ export const useAuthWithdrawal = ({
   const { data: withdrawProposalCount, refetch: refetchCount } =
     useReadContract({
       address: authorizeAddress,
-      abi: AuthorizeWithdrawalABI,
+      abi: AuthorizeABI,
       functionName: "withdrawProposalCount",
     });
 
   // Read required signatures
   const { data: requiredSignatures } = useReadContract({
     address: authorizeAddress,
-    abi: AuthorizeWithdrawalABI,
+    abi: AuthorizeABI,
     functionName: "requiredSignatures",
   });
 
@@ -57,10 +57,12 @@ export const useAuthWithdrawal = ({
       throw new Error("Missing required fields");
     }
 
+    console.log(receiver, parseEther(amount), target);
+
     try {
       const hash = await writeContractAsync({
         address: authorizeAddress,
-        abi: AuthorizeWithdrawalABI,
+        abi: AuthorizeABI,
         functionName: "proposeWithdrawal",
         args: [receiver as Address, parseEther(amount), target],
       });
@@ -71,6 +73,8 @@ export const useAuthWithdrawal = ({
       setTimeout(() => {
         refetchCount();
       }, 2000);
+
+      console.log(hash);
 
       return hash;
     } catch (error) {
@@ -84,7 +88,7 @@ export const useAuthWithdrawal = ({
     try {
       const hash = await writeContractAsync({
         address: authorizeAddress,
-        abi: AuthorizeWithdrawalABI,
+        abi: AuthorizeABI,
         functionName: "signWithdrawalProposal",
         args: [proposalId],
       });
@@ -102,7 +106,7 @@ export const useAuthWithdrawal = ({
     try {
       const hash = await writeContractAsync({
         address: authorizeAddress,
-        abi: AuthorizeWithdrawalABI,
+        abi: AuthorizeABI,
         functionName: "executeWithdrawalProposal",
         args: [proposalId],
       });
@@ -126,7 +130,7 @@ export const useAuthWithdrawal = ({
   const getWithdrawalProposal = (proposalId: number) => {
     return useReadContract({
       address: authorizeAddress,
-      abi: AuthorizeWithdrawalABI,
+      abi: AuthorizeABI,
       functionName: "getWithdrawalProposals",
       args: [proposalId],
     });
@@ -139,7 +143,7 @@ export const useAuthWithdrawal = ({
   ) => {
     return useReadContract({
       address: authorizeAddress,
-      abi: AuthorizeWithdrawalABI,
+      abi: AuthorizeABI,
       functionName: "hasSignedWithdrawalProposal",
       args: [proposalId, userAddress],
     });

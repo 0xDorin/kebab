@@ -5,7 +5,7 @@ import {
   useReadContract,
 } from "wagmi";
 import { Address } from "viem";
-import AuthorizeOwnerABI from "../../../../abis/AuthorizeOwner.json";
+import AuthorizeABI from "../../../../abis/Authorize.json";
 
 interface UseAuthOwnerProps {
   authorizeAddress: Address;
@@ -29,14 +29,14 @@ export const useAuthOwner = ({
   // Read current proposal count
   const { data: ownerProposalCount, refetch: refetchCount } = useReadContract({
     address: authorizeAddress,
-    abi: AuthorizeOwnerABI,
+    abi: AuthorizeABI,
     functionName: "ownerProposalCount",
   });
 
   // Read required signatures
   const { data: requiredSignatures } = useReadContract({
     address: authorizeAddress,
-    abi: AuthorizeOwnerABI,
+    abi: AuthorizeABI,
     functionName: "requiredSignatures",
   });
 
@@ -49,7 +49,7 @@ export const useAuthOwner = ({
     try {
       const hash = await writeContractAsync({
         address: authorizeAddress,
-        abi: AuthorizeOwnerABI,
+        abi: AuthorizeABI,
         functionName: "proposeAddOwner",
         args: [newOwner as Address],
       });
@@ -77,7 +77,7 @@ export const useAuthOwner = ({
     try {
       const hash = await writeContractAsync({
         address: authorizeAddress,
-        abi: AuthorizeOwnerABI,
+        abi: AuthorizeABI,
         functionName: "proposeRemoveOwner",
         args: [ownerToRemove as Address],
       });
@@ -101,7 +101,7 @@ export const useAuthOwner = ({
     try {
       const hash = await writeContractAsync({
         address: authorizeAddress,
-        abi: AuthorizeOwnerABI,
+        abi: AuthorizeABI,
         functionName: "signOwnerProposal",
         args: [proposalId],
       });
@@ -119,7 +119,7 @@ export const useAuthOwner = ({
     try {
       const hash = await writeContractAsync({
         address: authorizeAddress,
-        abi: AuthorizeOwnerABI,
+        abi: AuthorizeABI,
         functionName: "executeOwnerProposal",
         args: [proposalId],
       });
@@ -143,7 +143,7 @@ export const useAuthOwner = ({
   const getOwnerProposal = (proposalId: number) => {
     return useReadContract({
       address: authorizeAddress,
-      abi: AuthorizeOwnerABI,
+      abi: AuthorizeABI,
       functionName: "getOwnerProposals",
       args: [proposalId],
     });
@@ -153,7 +153,7 @@ export const useAuthOwner = ({
   const hasSignedOwnerProposal = (proposalId: number, userAddress: Address) => {
     return useReadContract({
       address: authorizeAddress,
-      abi: AuthorizeOwnerABI,
+      abi: AuthorizeABI,
       functionName: "hasSignedOwnerProposal",
       args: [proposalId, userAddress],
     });

@@ -1,10 +1,11 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAccount, useDisconnect } from "wagmi";
+import { useAccount, useConnect, useDisconnect } from "wagmi";
 
 export const Header: React.FC = () => {
   const { address, isConnected } = useAccount();
+  const { connectors, connect } = useConnect();
   const { disconnect } = useDisconnect();
 
   const handleDisconnect = () => {
@@ -58,7 +59,15 @@ export const Header: React.FC = () => {
                       Not Connected
                     </span>
                   </div>
-                  <appkit-button size="sm" />
+                  {connectors.length > 0 && (
+                    <Button
+                      size="sm"
+                      onClick={() => connect({ connector: connectors[0] })}
+                      className="bg-blue-500 hover:bg-blue-600 text-white"
+                    >
+                      Connect Wallet
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             )}
