@@ -50,8 +50,8 @@ export const useAuthOwner = ({
       const hash = await writeContractAsync({
         address: authorizeAddress,
         abi: AuthorizeABI,
-        functionName: "proposeAddOwner",
-        args: [newOwner as Address],
+        functionName: "proposeOwner",
+        args: [newOwner as Address, true],
       });
 
       setTx(hash);
@@ -79,7 +79,7 @@ export const useAuthOwner = ({
         address: authorizeAddress,
         abi: AuthorizeABI,
         functionName: "proposeRemoveOwner",
-        args: [ownerToRemove as Address],
+        args: [ownerToRemove as Address, false],
       });
 
       setTx(hash);
