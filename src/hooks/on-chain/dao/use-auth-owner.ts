@@ -78,7 +78,7 @@ export const useAuthOwner = ({
       const hash = await writeContractAsync({
         address: authorizeAddress,
         abi: AuthorizeABI,
-        functionName: "proposeRemoveOwner",
+        functionName: "proposeOwner",
         args: [ownerToRemove as Address, false],
       });
 

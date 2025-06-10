@@ -57,8 +57,6 @@ export const useAuthWithdrawal = ({
       throw new Error("Missing required fields");
     }
 
-    console.log(receiver, parseEther(amount), target);
-
     try {
       const hash = await writeContractAsync({
         address: authorizeAddress,
@@ -73,8 +71,6 @@ export const useAuthWithdrawal = ({
       setTimeout(() => {
         refetchCount();
       }, 2000);
-
-      console.log(hash);
 
       return hash;
     } catch (error) {

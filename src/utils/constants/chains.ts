@@ -10,8 +10,8 @@ export const monadTestnet: Chain = {
   },
   rpcUrls: {
     default: {
-      http: ["http://localhost:8545"],
-      // http: ["https://monad-testnet.drpc.org"],
+      // http: ["http://localhost:8545"],
+      http: ["https://monad-testnet.drpc.org"],
     },
   },
   blockExplorers: {

@@ -1,29 +1,85 @@
-import React from "react";
+import React, { useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useAccount, useConnect, useDisconnect } from "wagmi";
+import { useWallet } from "@/stores/walletStore";
 
 export const Header: React.FC = () => {
-  const { address, isConnected } = useAccount();
-  const { connectors, connect } = useConnect();
-  const { disconnect } = useDisconnect();
+  const pathname = usePathname();
 
-  const handleDisconnect = () => {
-    disconnect();
-  };
+  // 🚀 새로운 Zustand 기반 훅 사용 (Context와 거의 동일!)
+  const {
+    address,
+    isConnected,
+    isCorrectChain,
+    disconnect,
+    connect,
+    connectors,
+    switchToCorrectChain,
+    formatAddress,
+    chainId,
+  } = useWallet();
 
-  const formatAddress = (address: string) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
-  };
+  // 🔒 체인 검증 로직 (기존과 동일)
+  useEffect(() => {
+    if (isConnected && !isCorrectChain) {
+      const handleChainMismatch = async () => {
+        const shouldSwitch = window.confirm(
+          `You are connected to chain ${chainId}.\nThis app requires Monad Testnet.\n\nWould you like to switch to Monad Testnet?`
+        );
+
+        if (shouldSwitch) {
+          try {
+            await switchToCorrectChain();
+          } catch (error) {
+            console.error("Failed to switch chain:", error);
+            alert("Failed to switch network. Disconnecting wallet...");
+            disconnect();
+          }
+        } else {
+          alert("Disconnecting wallet due to wrong network.");
+          disconnect();
+        }
+      };
+
+      const timer = setTimeout(handleChainMismatch, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isConnected, isCorrectChain, chainId, switchToCorrectChain, disconnect]);
+
+  const navItems = [
+    { href: "/create", label: "Create" },
+    { href: "/sign", label: "Sign" },
+  ];
 
   return (
     <header className="border-b bg-white shadow-sm">
       <div className="container mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
           {/* Logo/Title */}
-          <div className="flex items-center space-x-4">
-            <h1 className="text-2xl font-bold text-gray-900">Auth CMS</h1>
-            <span className="text-sm text-gray-500">Multisig Management</span>
+          <div className="flex items-center space-x-8">
+            <Link href="/" className="flex items-center space-x-4">
+              <h1 className="text-2xl font-bold text-gray-900">Auth CMS</h1>
+              <span className="text-sm text-gray-500">Multisig Management</span>
+            </Link>
+
+            {/* Navigation */}
+            <nav className="flex items-center space-x-6">
+              {navItems.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`text-sm font-medium transition-colors hover:text-blue-600 ${
+                    pathname === item.href
+                      ? "text-blue-600 border-b-2 border-blue-600 pb-1"
+                      : "text-gray-700"
+                  }`}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
           </div>
 
           {/* Wallet Connection */}
@@ -43,7 +99,7 @@ export const Header: React.FC = () => {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={handleDisconnect}
+                    onClick={() => disconnect()}
                     className="border-green-300 text-green-700 hover:bg-green-100"
                   >
                     Disconnect

@@ -13,7 +13,12 @@ import {
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuthOwner } from "@/hooks/on-chain/dao/use-auth-owner";
-import { isAddress } from "viem";
+import { useFormState } from "@/hooks/useFormState";
+import {
+  validateOwnerForm,
+  getFirstError,
+  type OwnerFormData,
+} from "@/utils/validation/formValidation";
 
 interface OwnerFormProps {
   authorizeAddress: `0x${string}`;
@@ -24,57 +29,62 @@ export const OwnerForm: React.FC<OwnerFormProps> = ({
   authorizeAddress,
   onProposalCreated,
 }) => {
-  // 폼 상태는 컴포넌트에서 관리
-  const [ownerAddress, setOwnerAddress] = useState("");
-  const [actionType, setActionType] = useState<"add" | "remove">("add");
-  const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<string>("");
+  // 🎨 UI 상태
+  const [formData, setFormData] = useState<OwnerFormData>({
+    ownerAddress: "",
+    actionType: "add",
+  });
 
-  // Hook에서는 비즈니스 로직만
+  // 🎯 비즈니스 로직 (훅으로 분리)
   const { proposeAddOwner, proposeRemoveOwner, isPending } = useAuthOwner({
     authorizeAddress,
   });
+  const { error, success, setError, setSuccess, clearMessages } =
+    useFormState();
+
+  // 🎨 UI 핸들러
+  const updateField = (field: keyof OwnerFormData, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
+    clearMessages(); // 입력시 메시지 클리어
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setSuccess("");
+    clearMessages();
 
-    // 유효성 검사
-    if (!ownerAddress.trim()) {
-      setError("Please enter owner address");
-      return;
-    }
-
-    if (!isAddress(ownerAddress)) {
-      setError("Invalid owner address");
+    // 🎯 비즈니스 로직: 검증
+    const validationErrors = validateOwnerForm(formData);
+    if (validationErrors.length > 0) {
+      setError(getFirstError(validationErrors));
       return;
     }
 
     try {
-      // 액션 타입에 따라 적절한 함수 호출
-      if (actionType === "add") {
-        await proposeAddOwner(ownerAddress);
-        setSuccess("Add owner proposal created successfully!");
+      // 🎯 비즈니스 로직: 제출
+      if (formData.actionType === "add") {
+        await proposeAddOwner(formData.ownerAddress);
       } else {
-        await proposeRemoveOwner(ownerAddress);
-        setSuccess("Remove owner proposal created successfully!");
+        await proposeRemoveOwner(formData.ownerAddress);
       }
 
-      console.log(`${actionType} owner proposal created:`, {
-        ownerAddress,
-        actionType,
-      });
+      // 🎨 UI 피드백
+      const successMessage = `${
+        formData.actionType === "add" ? "Add" : "Remove"
+      } owner proposal created successfully!`;
+      setSuccess(successMessage);
 
-      // 폼 초기화
-      setOwnerAddress("");
+      // 🎨 UI 초기화
+      setFormData((prev) => ({ ...prev, ownerAddress: "" }));
 
-      if (onProposalCreated) {
-        onProposalCreated();
-      }
+      // 🎯 비즈니스 콜백
+      onProposalCreated?.();
     } catch (error) {
-      console.error(`Error creating ${actionType} owner proposal:`, error);
-      setError(`Failed to create ${actionType} owner proposal`);
+      console.error(
+        `Error creating ${formData.actionType} owner proposal:`,
+        error
+      );
+      const errorMessage = `Failed to create ${formData.actionType} owner proposal`;
+      setError(errorMessage);
     }
   };
 
@@ -84,6 +94,7 @@ export const OwnerForm: React.FC<OwnerFormProps> = ({
         <CardTitle>Manage Owner</CardTitle>
       </CardHeader>
       <CardContent>
+        {/* 🎨 UI: 상태 메시지 */}
         {error && (
           <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded">
             {error}
@@ -94,12 +105,16 @@ export const OwnerForm: React.FC<OwnerFormProps> = ({
             {success}
           </div>
         )}
+
+        {/* 🎨 UI: 폼 필드 */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <Label htmlFor="action">Action</Label>
             <Select
-              value={actionType}
-              onValueChange={(value: "add" | "remove") => setActionType(value)}
+              value={formData.actionType}
+              onValueChange={(value: "add" | "remove") =>
+                updateField("actionType", value)
+              }
             >
               <SelectTrigger>
                 <SelectValue />
@@ -117,16 +132,18 @@ export const OwnerForm: React.FC<OwnerFormProps> = ({
               id="ownerAddress"
               type="text"
               placeholder="0x..."
-              value={ownerAddress}
-              onChange={(e) => setOwnerAddress(e.target.value)}
+              value={formData.ownerAddress}
+              onChange={(e) => updateField("ownerAddress", e.target.value)}
               required
             />
           </div>
 
           <Button type="submit" disabled={isPending} className="w-full">
             {isPending
-              ? `${actionType === "add" ? "Adding" : "Removing"} Owner...`
-              : `${actionType === "add" ? "Add" : "Remove"} Owner`}
+              ? `${
+                  formData.actionType === "add" ? "Adding" : "Removing"
+                } Owner...`
+              : `${formData.actionType === "add" ? "Add" : "Remove"} Owner`}
           </Button>
         </form>
       </CardContent>
