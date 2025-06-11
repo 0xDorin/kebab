@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { Wrapper } from "@/components/layouts/Wrapper";
-import { SingleProposalView } from "@/components/proposals/single-proposal-view";
+import { SingleProposalView } from "@/components/proposals/SingleProposalView";
 import {
   Card,
   CardContent,

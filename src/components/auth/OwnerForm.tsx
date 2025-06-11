@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuthOwner } from "@/hooks/on-chain/dao/use-auth-owner";
+import { useAuthOwner } from "@/hooks/on-chain/dao/useAuthOwner";
 import { useFormState } from "@/hooks/useFormState";
 import {
   validateOwnerForm,

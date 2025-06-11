@@ -8,7 +8,7 @@ import { OptimizedVaultBalance } from "./OptimizedVaultBalance";
 import {
   useAuthWithdrawal,
   WithdrawalTarget,
-} from "@/hooks/on-chain/dao/use-auth-withdrawal";
+} from "@/hooks/on-chain/dao/useAuthWithdrawal";
 import { useFormState } from "@/hooks/useFormState";
 import {
   validateWithdrawalForm,

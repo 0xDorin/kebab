@@ -2,13 +2,13 @@
 
 import React, { useMemo, useCallback } from "react";
 import { Address } from "viem";
-import { useAuthWithdrawal } from "../../hooks/on-chain/dao/use-auth-withdrawal";
-import { useAuthOwner } from "../../hooks/on-chain/dao/use-auth-owner";
+import { useAuthWithdrawal } from "@/hooks/on-chain/dao/useAuthWithdrawal";
+import { useAuthOwner } from "@/hooks/on-chain/dao/useAuthOwner";
 import {
   useWithdrawalProposal,
   useOwnerProposal,
   useIsOwner,
-} from "../../hooks/queries/useProposalsQuery";
+} from "@/hooks/queries/useProposalsQuery";
 import { useWalletAddress, useIsConnected } from "@/stores/walletStore";
 import {
   Card,
@@ -16,9 +16,9 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../ui/card";
-import { Button } from "../ui/button";
-import { Badge } from "../ui/badge";
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { Loader2 } from "lucide-react";
 import { PROPOSAL_TYPES, type ProposalType } from "@/utils/constants/contracts";
 import {
