@@ -14,6 +14,20 @@ Environment Variables
 
 Refer to the `.env.example` file in the root directory for required environment variables.
 
+Features
+
+📝 Create Page
+- Create various types of proposals:
+  - Vault Withdrawal: Proposals to withdraw from fee vault or treasury
+  - Add Auth Owner: Proposals to add a new authorized owner
+
+✅ Sign Page
+- View a list of current proposals
+- Sign and execute proposals
+- Check whether:
+  - You have already signed a proposal
+  - You meet the conditions to sign (e.g., signer status, quorum status)
+
 
 UI Preview
 
