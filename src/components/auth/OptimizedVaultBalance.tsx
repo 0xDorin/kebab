@@ -5,6 +5,7 @@ import { formatEther } from "viem";
 import { Badge } from "../ui/badge";
 import { useVaultBalances } from "@/hooks/queries/useBalanceQuery";
 import { CONTRACT_ADDRESSES } from "@/utils/constants/contracts";
+import { formatWalletAddress } from "@/utils/walletUtils";
 
 interface OptimizedVaultBalanceProps {
   address: `0x${string}` | undefined;
@@ -132,7 +133,7 @@ export const OptimizedVaultBalance: React.FC<OptimizedVaultBalanceProps> = ({
           }`}
         </div>
         <div className="text-sm text-gray-500">
-          Address: {address.slice(0, 6)}...{address.slice(-4)}
+          Address: {formatWalletAddress(address)}
         </div>
       </div>
     </div>

@@ -9,7 +9,7 @@ import {
   useOwnerProposal,
   useIsOwner,
 } from "@/hooks/queries/useProposalsQuery";
-import { useWalletAddress, useIsConnected } from "@/stores/walletStore";
+import { useAccount } from "wagmi";
 import {
   Card,
   CardContent,
@@ -246,9 +246,8 @@ export const SingleProposalView = ({
   proposalType,
   proposalId,
 }: SingleProposalViewProps) => {
-  // 🔐 지갑 연결 상태 및 사용자 정보
-  const userAddress = useWalletAddress();
-  const isConnected = useIsConnected();
+  // 🔐 지갑 연결 상태 및 사용자 정보 - 직접 wagmi 사용
+  const { address: userAddress, isConnected } = useAccount();
   const { isOwner } = useIsOwner(authorizeAddress);
 
   // 🚀 통합된 상태 관리

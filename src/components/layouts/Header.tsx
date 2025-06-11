@@ -3,23 +3,30 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { useWallet } from "@/stores/walletStore";
+import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
+import { monadTestnet } from "@/utils/constants/chains";
+import { formatWalletAddress } from "@/utils/walletUtils";
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
 
-  // 🚀 새로운 Zustand 기반 훅 사용 (Context와 거의 동일!)
-  const {
-    address,
-    isConnected,
-    isCorrectChain,
-    disconnect,
-    connect,
-    connectors,
-    switchToCorrectChain,
-    formatAddress,
-    chainId,
-  } = useWallet();
+  // 🚀 직접 wagmi 훅 사용 - 불필요한 추상화 제거
+  const { address, isConnected, chain } = useAccount();
+  const { connect, connectors } = useConnect();
+  const { disconnect } = useDisconnect();
+  const { switchChain } = useSwitchChain();
+
+  const isCorrectChain = chain?.id === monadTestnet.id;
+  const chainId = chain?.id;
+
+  const switchToCorrectChain = async () => {
+    try {
+      await switchChain({ chainId: monadTestnet.id });
+    } catch (error) {
+      console.error("Failed to switch chain:", error);
+      throw error;
+    }
+  };
 
   // 🔒 체인 검증 로직 (기존과 동일)
   useEffect(() => {
@@ -94,7 +101,7 @@ export const Header: React.FC = () => {
                     </span>
                   </div>
                   <span className="text-sm font-mono text-green-700">
-                    {formatAddress(address)}
+                    {formatWalletAddress(address)}
                   </span>
                   <Button
                     variant="outline"

@@ -2,7 +2,7 @@
 
 import { Address } from "viem";
 import { useReadContract } from "wagmi";
-import { useWalletAddress } from "@/stores/walletStore";
+import { useAccount } from "wagmi";
 import AuthorizeABI from "../../../abis/Authorize.json";
 import { WithdrawalProposal, OwnerProposal } from "../../utils/types/proposal";
 
@@ -11,7 +11,7 @@ export const useWithdrawalProposal = (
   authorizeAddress: Address,
   proposalId: number
 ) => {
-  const address = useWalletAddress();
+  const { address } = useAccount();
 
   // Proposal 데이터 가져오기
   const {
@@ -79,7 +79,7 @@ export const useOwnerProposal = (
   authorizeAddress: Address,
   proposalId: number
 ) => {
-  const address = useWalletAddress();
+  const { address } = useAccount();
 
   // Proposal 데이터 가져오기
   const {
@@ -206,7 +206,7 @@ export const useOwnerProposals = (authorizeAddress: Address) => {
 
 // 🔐 현재 사용자의 오너 권한 확인
 export const useIsOwner = (authorizeAddress: Address) => {
-  const address = useWalletAddress();
+  const { address } = useAccount();
 
   const {
     data: isOwnerData,
