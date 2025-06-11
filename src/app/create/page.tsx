@@ -19,17 +19,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FormSkeleton } from "@/components/ui/skeleton";
-
-// Get contract addresses from environment variables
-const AUTHORIZE_CONTRACT_ADDRESS = process.env
-  .NEXT_PUBLIC_AUTHORIZE_CONTRACT_ADDRESS as `0x${string}`;
-
-// Validate that all required environment variables are set
-if (!AUTHORIZE_CONTRACT_ADDRESS) {
-  console.error(
-    "Missing required environment variables. Please check your .env.local file."
-  );
-}
+import { CONTRACT_ADDRESSES } from "@/utils/constants/contracts";
 
 export default function CreatePage() {
   const [selectedAction, setSelectedAction] = useState<string>("withdraw");
@@ -65,13 +55,13 @@ export default function CreatePage() {
                 <>
                   {selectedAction === "withdraw" && (
                     <WithdrawalForm
-                      authorizeAddress={AUTHORIZE_CONTRACT_ADDRESS}
+                      authorizeAddress={CONTRACT_ADDRESSES.AUTHORIZE}
                       onProposalCreated={handleRefresh}
                     />
                   )}
                   {selectedAction === "owneradd" && (
                     <OwnerForm
-                      authorizeAddress={AUTHORIZE_CONTRACT_ADDRESS}
+                      authorizeAddress={CONTRACT_ADDRESSES.AUTHORIZE}
                       onProposalCreated={handleRefresh}
                     />
                   )}

@@ -152,7 +152,6 @@ const ProposalDetails = React.memo<{
 
   return (
     <div className="space-y-4">
-      {/* 🔒 타입 가드를 사용한 안전한 렌더링 */}
       {isWithdrawalType && isWithdrawalProposal(proposal) && (
         <>
           <div>
@@ -207,7 +206,6 @@ const ProposalDetails = React.memo<{
 
 ProposalDetails.displayName = "ProposalDetails";
 
-// 🚀 성능 최적화: 로딩/에러 상태 통합 훅 (기존 쿼리 훅 활용)
 const useProposalState = (
   authorizeAddress: ContractAddress,
   proposalId: number,
@@ -246,18 +244,15 @@ export const SingleProposalView = ({
   proposalType,
   proposalId,
 }: SingleProposalViewProps) => {
-  // 🔐 지갑 연결 상태 및 사용자 정보 - 직접 wagmi 사용
   const { address: userAddress, isConnected } = useAccount();
   const { isOwner } = useIsOwner(authorizeAddress);
 
-  // 🚀 통합된 상태 관리
   const { proposal, isLoading, error, isWithdrawalType } = useProposalState(
     authorizeAddress,
     proposalId,
     proposalType
   );
 
-  // 🎯 비즈니스 로직: 데이터 가져오기
   const {
     signWithdrawalProposal,
     executeWithdrawalProposal,
@@ -271,7 +266,6 @@ export const SingleProposalView = ({
     ? isWithdrawalPending
     : ownerHooks.isPending;
 
-  // 🚀 성능 최적화: 메모이제이션된 콜백
   const handleSign = useCallback(async () => {
     try {
       if (isWithdrawalType) {
@@ -306,7 +300,6 @@ export const SingleProposalView = ({
     proposalId,
   ]);
 
-  // 🚀 성능 최적화: 계산된 값들 메모이제이션 (타입 안전성 강화)
   const computedValues = useMemo(() => {
     if (!proposal) return null;
 
@@ -322,7 +315,6 @@ export const SingleProposalView = ({
     };
   }, [proposal, requiredSignatures]);
 
-  // 🎨 UI: 로딩 상태
   if (isLoading) {
     return (
       <Card className="max-w-2xl mx-auto">
@@ -334,7 +326,6 @@ export const SingleProposalView = ({
     );
   }
 
-  // 🎨 UI: 에러 상태
   if (error) {
     return (
       <Card className="max-w-2xl mx-auto border-red-200 bg-red-50">
@@ -350,7 +341,6 @@ export const SingleProposalView = ({
     );
   }
 
-  // 🎨 UI: 찾지 못한 경우
   if (!proposal || !computedValues) {
     return (
       <Card className="max-w-2xl mx-auto border-red-200 bg-red-50">
@@ -388,7 +378,6 @@ export const SingleProposalView = ({
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* 🚀 메모이제이션된 상세 정보 (타입 안전성 강화) */}
         <ProposalDetails
           proposal={proposal}
           isWithdrawalType={isWithdrawalType}
@@ -396,7 +385,6 @@ export const SingleProposalView = ({
           requiredSignatures={requiredSignaturesNum}
         />
 
-        {/* 🚀 메모이제이션된 액션 버튼 */}
         <ProposalActions
           onSign={handleSign}
           onExecute={handleExecute}
@@ -409,7 +397,6 @@ export const SingleProposalView = ({
           isConnected={isConnected}
         />
 
-        {/* 🎨 UI: 실행 완료 메시지 */}
         {executed && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
             <p className="text-green-800 text-sm">
