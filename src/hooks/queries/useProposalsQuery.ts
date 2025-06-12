@@ -18,6 +18,7 @@ export const useWithdrawalProposal = (
     data: proposalData,
     isLoading: isProposalLoading,
     error: proposalError,
+    refetch: refetchProposal,
   } = useReadContract({
     address: authorizeAddress,
     abi: AuthorizeABI,
@@ -37,6 +38,7 @@ export const useWithdrawalProposal = (
     data: hasSignedData,
     isLoading: isSignatureLoading,
     error: signatureError,
+    refetch: refetchHasSigned,
   } = useReadContract({
     address: authorizeAddress,
     abi: AuthorizeABI,
@@ -71,6 +73,10 @@ export const useWithdrawalProposal = (
     proposal,
     isLoading: isProposalLoading || isSignatureLoading,
     error: proposalError || signatureError,
+    refetch: async () => {
+      await refetchProposal();
+      await refetchHasSigned();
+    },
   };
 };
 
@@ -86,6 +92,7 @@ export const useOwnerProposal = (
     data: proposalData,
     isLoading: isProposalLoading,
     error: proposalError,
+    refetch: refetchProposal,
   } = useReadContract({
     address: authorizeAddress,
     abi: AuthorizeABI,
@@ -105,6 +112,7 @@ export const useOwnerProposal = (
     data: hasSignedData,
     isLoading: isSignatureLoading,
     error: signatureError,
+    refetch: refetchHasSigned,
   } = useReadContract({
     address: authorizeAddress,
     abi: AuthorizeABI,
@@ -138,6 +146,10 @@ export const useOwnerProposal = (
     proposal,
     isLoading: isProposalLoading || isSignatureLoading,
     error: proposalError || signatureError,
+    refetch: async () => {
+      await refetchProposal();
+      await refetchHasSigned();
+    },
   };
 };
 

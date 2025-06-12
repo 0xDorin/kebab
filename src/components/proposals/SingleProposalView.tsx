@@ -226,15 +226,18 @@ const useProposalState = (
         : ownerResult.isLoading,
       error: isWithdrawalType ? withdrawalResult.error : ownerResult.error,
       isWithdrawalType,
+      refetch: isWithdrawalType ? withdrawalResult.refetch : ownerResult.refetch,
     }),
     [
       isWithdrawalType,
       withdrawalResult.proposal,
       withdrawalResult.isLoading,
       withdrawalResult.error,
+      withdrawalResult.refetch,
       ownerResult.proposal,
       ownerResult.isLoading,
       ownerResult.error,
+      ownerResult.refetch,
     ]
   );
 };
@@ -247,7 +250,7 @@ export const SingleProposalView = ({
   const { address: userAddress, isConnected } = useAccount();
   const { isOwner } = useIsOwner(authorizeAddress);
 
-  const { proposal, isLoading, error, isWithdrawalType } = useProposalState(
+  const { proposal, isLoading, error, isWithdrawalType, refetch } = useProposalState(
     authorizeAddress,
     proposalId,
     proposalType
@@ -273,6 +276,7 @@ export const SingleProposalView = ({
       } else {
         await ownerHooks.signOwnerProposal(proposalId);
       }
+      await refetch();
     } catch (error) {
       console.error("Error signing proposal:", error);
     }
@@ -281,6 +285,7 @@ export const SingleProposalView = ({
     signWithdrawalProposal,
     ownerHooks.signOwnerProposal,
     proposalId,
+    refetch,
   ]);
 
   const handleExecute = useCallback(async () => {
@@ -290,6 +295,7 @@ export const SingleProposalView = ({
       } else {
         await ownerHooks.executeOwnerProposal(proposalId);
       }
+      await refetch();
     } catch (error) {
       console.error("Error executing proposal:", error);
     }
@@ -298,6 +304,7 @@ export const SingleProposalView = ({
     executeWithdrawalProposal,
     ownerHooks.executeOwnerProposal,
     proposalId,
+    refetch,
   ]);
 
   const computedValues = useMemo(() => {

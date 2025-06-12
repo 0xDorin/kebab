@@ -140,10 +140,7 @@ export const OwnerForm: React.FC<OwnerFormProps> = ({
 
           <Button type="submit" disabled={isPending} className="w-full">
             {isPending
-              ? `${
-                  formData.actionType === "add" ? "Adding" : "Removing"
-                } Owner...`
-              : `${formData.actionType === "add" ? "Add" : "Remove"} Owner`}
+              ? "Creating Proposal..." : "Create Proposal" }
           </Button>
         </form>
       </CardContent>
