@@ -142,7 +142,8 @@ const ProposalDetails = React.memo<{
   isWithdrawalType: boolean;
   signatureCount: number;
   requiredSignatures: number;
-}>(({ proposal, isWithdrawalType, signatureCount, requiredSignatures }) => {
+  executed: boolean;
+}>(({ proposal, isWithdrawalType, signatureCount, requiredSignatures, executed }) => {
   const progressPercentage = useMemo(() => {
     return Math.min(
       (signatureCount / Math.max(requiredSignatures, 1)) * 100,
@@ -184,22 +185,25 @@ const ProposalDetails = React.memo<{
         </div>
       )}
 
-      <div>
-        <label className="text-sm font-medium text-gray-700">
-          Signatures ({signatureCount} / {requiredSignatures})
-        </label>
-        <div className="flex items-center gap-2 mt-1">
-          <div className="flex-1 bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-blue-500 h-2 rounded-full transition-all duration-300"
-              style={{ width: `${progressPercentage}%` }}
-            />
+      {/* signatures 게이지: executed가 false일 때만 렌더링 */}
+      {!executed && (
+        <div>
+          <label className="text-sm font-medium text-gray-700">
+            Signatures ({signatureCount} / {requiredSignatures})
+          </label>
+          <div className="flex items-center gap-2 mt-1">
+            <div className="flex-1 bg-gray-200 rounded-full h-2">
+              <div
+                className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${progressPercentage}%` }}
+              />
+            </div>
+            <span className="text-sm text-gray-600">
+              {signatureCount} / {requiredSignatures}
+            </span>
           </div>
-          <span className="text-sm text-gray-600">
-            {signatureCount} / {requiredSignatures}
-          </span>
         </div>
-      </div>
+      )}
     </div>
   );
 });
@@ -390,6 +394,7 @@ export const SingleProposalView = ({
           isWithdrawalType={isWithdrawalType}
           signatureCount={signatureCount}
           requiredSignatures={requiredSignaturesNum}
+          executed={executed}
         />
 
         <ProposalActions
