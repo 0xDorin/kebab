@@ -23,7 +23,8 @@ export const Header: React.FC = () => {
 
   // 🔒 체인 검증 로직 (기존과 동일)
   useEffect(() => {
-    if (isConnected && !isCorrectChain) {
+    // chainId가 없으면 안내창을 띄우지 않음 (최신 상태가 아닐 수 있음)
+    if (isConnected && chainId && !isCorrectChain) {
       const handleChainMismatch = async () => {
         const shouldSwitch = window.confirm(
           `You are connected to chain ${chainId}.\nThis app requires Monad Testnet.\n\nWould you like to switch to Monad Testnet?`
