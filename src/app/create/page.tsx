@@ -20,12 +20,41 @@ import {
 } from "@/components/ui/select";
 import { FormSkeleton } from "@/components/ui/skeleton";
 import { CONTRACT_ADDRESSES } from "@/utils/constants/contracts";
+import { useIsOwner } from "@/hooks/queries/useProposalsQuery";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 export default function CreatePage() {
   const [selectedAction, setSelectedAction] = useState<string>("withdraw");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { isOwner, isLoading: isOwnerLoading } = useIsOwner(CONTRACT_ADDRESSES.AUTHORIZE);
 
   const handleRefresh = () => {};
+
+  if (isOwnerLoading) {
+    return (
+      <Wrapper>
+        <div className="max-w-6xl mx-auto">
+          <FormSkeleton />
+        </div>
+      </Wrapper>
+    );
+  }
+
+  if (!isOwner) {
+    return (
+      <Wrapper>
+        <div className="max-w-6xl mx-auto">
+          <Alert variant="destructive">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>
+              You need to be an owner to create proposals.
+            </AlertDescription>
+          </Alert>
+        </div>
+      </Wrapper>
+    );
+  }
 
   return (
     <Wrapper>

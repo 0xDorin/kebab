@@ -11,17 +11,7 @@ import {
 } from "../components/ui/card";
 import { Button } from "../components/ui/button";
 import { Plus, FileSearch, Settings } from "lucide-react";
-
-// Get contract addresses from environment variables
-const AUTHORIZE_CONTRACT_ADDRESS = process.env
-  .NEXT_PUBLIC_AUTHORIZE_CONTRACT_ADDRESS as `0x${string}`;
-
-// Validate that all required environment variables are set
-if (!AUTHORIZE_CONTRACT_ADDRESS) {
-  console.error(
-    "Missing required environment variables. Please check your .env.local file."
-  );
-}
+import { CONTRACT_ADDRESSES } from "@/utils/constants/contracts";
 
 export default function Home() {
   return (
@@ -44,7 +34,7 @@ export default function Home() {
             <div className="space-y-2 font-mono text-sm">
               <div>
                 <strong>Authorize Contract:</strong>{" "}
-                {AUTHORIZE_CONTRACT_ADDRESS}
+                {CONTRACT_ADDRESSES.AUTHORIZE}
               </div>
             </div>
           </CardContent>

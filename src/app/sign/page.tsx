@@ -20,18 +20,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
-
-// Get contract addresses from environment variables
-const AUTHORIZE_CONTRACT_ADDRESS = process.env
-  .NEXT_PUBLIC_AUTHORIZE_CONTRACT_ADDRESS as `0x${string}`;
-
-// Validate that all required environment variables are set
-if (!AUTHORIZE_CONTRACT_ADDRESS) {
-  console.error(
-    "Missing required environment variables. Please check your .env.local file."
-  );
-}
+import { CONTRACT_ADDRESSES } from "@/utils/constants/contracts";
+import { useProposalCounts } from "@/hooks/queries/useProposalsQuery";
 
 export default function SignPage() {
   const [proposalType, setProposalType] = useState<string>("withdrawal");
@@ -41,10 +31,17 @@ export default function SignPage() {
     id: number;
   } | null>(null);
 
+  const { withdrawalCount, ownerCount, isLoading: isCountLoading } = useProposalCounts(CONTRACT_ADDRESSES.AUTHORIZE);
+  const maxId = proposalType === "withdrawal" ? withdrawalCount : ownerCount;
+
   const handleSearch = () => {
     const id = parseInt(proposalId);
-    if (isNaN(id) || id < 0) {
-      alert("Please enter a valid proposal ID");
+    if (
+      isNaN(id) ||
+      id < 0 ||
+      (maxId !== undefined && id >= maxId)
+    ) {
+      alert("존재하지 않는 proposal ID입니다.");
       return;
     }
     setSearchedProposal({ type: proposalType, id });
@@ -71,7 +68,7 @@ export default function SignPage() {
               <div className="h-full">
                 {searchedProposal ? (
                   <SingleProposalView
-                    authorizeAddress={AUTHORIZE_CONTRACT_ADDRESS}
+                    authorizeAddress={CONTRACT_ADDRESSES.AUTHORIZE}
                     proposalType={searchedProposal.type}
                     proposalId={searchedProposal.id}
                   />
@@ -142,13 +139,19 @@ export default function SignPage() {
                       value={proposalId}
                       onChange={(e) => setProposalId(e.target.value)}
                       min="0"
+                      max={maxId !== undefined ? maxId - 1 : undefined}
                     />
                   </div>
 
                   <div className="space-y-2">
                     <Button
                       onClick={handleSearch}
-                      disabled={!proposalId}
+                      disabled={
+                        !proposalId ||
+                        isNaN(Number(proposalId)) ||
+                        Number(proposalId) < 0 ||
+                        (maxId !== undefined && Number(proposalId) >= maxId)
+                      }
                       className="w-full"
                     >
                       Search Proposal

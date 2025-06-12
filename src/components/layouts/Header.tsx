@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useAccount, useConnect, useDisconnect, useSwitchChain } from "wagmi";
 import { monadTestnet } from "@/utils/constants/chains";
 import { formatWalletAddress } from "@/utils/walletUtils";
+import { useWallet } from "@/hooks/useWallet";
 
 export const Header: React.FC = () => {
   const pathname = usePathname();
@@ -14,19 +15,11 @@ export const Header: React.FC = () => {
   const { address, isConnected, chain } = useAccount();
   const { connect, connectors } = useConnect();
   const { disconnect } = useDisconnect();
-  const { switchChain } = useSwitchChain();
+  const { switchToCorrectChain } = useWallet();
 
   const isCorrectChain = chain?.id === monadTestnet.id;
   const chainId = chain?.id;
 
-  const switchToCorrectChain = async () => {
-    try {
-      await switchChain({ chainId: monadTestnet.id });
-    } catch (error) {
-      console.error("Failed to switch chain:", error);
-      throw error;
-    }
-  };
 
   // 🔒 체인 검증 로직 (기존과 동일)
   useEffect(() => {
